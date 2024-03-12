@@ -1,0 +1,53 @@
+@import "../../../css/colors.css";
+@import "../../../css/units.css";
+
+.header {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    border-bottom: 1px solid $ui-black-transparent;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    align-items: center;
+    justify-content: center;
+    color: $motion-primary;
+    position: relative;
+    font-size: 1.5rem; /**rogic-mobile*/
+    height: 5rem;
+}
+
+.header-wapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30rem;   /**rogic-mobile*/
+}
+
+.header-button {
+    height: 3rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.header-button-disable {
+    color: $ui-disable;
+}
+
+.line {
+    border: 2px solid $ui-black-transparent; /**rogic-mobile*/
+    height: 1.5rem;
+    margin-left: 0px;
+    margin-right: -38px;
+}
+
+.header-button-image {
+    height: 2rem;
+    width: 2rem;
+    margin-right: 0.3rem;
+}
+
+.header-button-image-disable {
+    filter: grayscale(0.8);
+}
