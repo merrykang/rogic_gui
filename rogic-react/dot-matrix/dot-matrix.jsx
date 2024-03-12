@@ -1,283 +1,329 @@
-import PropTypes, {object} from 'prop-types';
-import React, {useState, useEffect} from 'react';
-import classNames from 'classnames';
+import bindAll from 'lodash.bindall';
+import PropTypes from 'prop-types';
+import React from 'react';
+import DotMatrixComponent from '../components/dot-matrix/dot-matrix.jsx';
+import {connect} from 'react-redux';
 
-import Modal from '../../containers/modal.jsx';
-import Box from '../box/box.jsx';
+import exampleData from '../components/dot-matrix/storage/storage.json';
 
-import VirtualMatrix from './virtual-matrix/virtual-matrix.jsx'
-import Storage from './storage/storage.jsx'
-import styles from './dot-matrix.css';
-
-import brushButtonImage from './icon/brush.svg'
-import clearButtonImage from './icon/clear.svg'
-import eraserButtonImage from './icon/eraser.svg'
-import exchangeButtonImage from './icon/exchange.svg'
-import opaqueButtonImage from './icon/opaque.svg'
-import rotateLeftButtonImage from './icon/rotate-left.svg'
-import rotateRightButtonImage from './icon/rotate-right.svg'
-import saveButtonImage from './icon/save.svg'
-
-const deactiveColor = {}
-
-const activeColor = {
-    backgroundColor: '#4B96FF'
-}
-
-const redColor = {
-    backgroundColor: '#FF0000'
-}
-
-const yellowColor = {
-    backgroundColor: '#FFCC33'
-}
-
-const greenColor = {
-    backgroundColor: '#00FF00'
-}
-
-
-const DotMatrixComponent = props => {
-    const {
-        onCancel,
-        onOk,
-        onBrushButtonClick,
-        onControlButtonClick,
-        onDeleteButtonClick,
-        onEraserButtonClick,
-        onExchangeButtonClick,
-        onRotateLeftButtonClick,
-        onRotateRightButtonClick,
-        onSaveButtonClick,
-        onStoredDataClick,
-        useFooter,
-        useHeader,
-        useCancelButton,
-        changeDotData,
-        clearMode,
-        clickMode,
-        dot,
-        exampleData,
-        gridVisible,
-        matrixSize,
-        isDrag,
-        rotateStatus,
-        onDrag,
-        storedData,
-        changedStoredData,
-        storageSpaceStyle,
-        height,  // rogic-mobile
-        width
-    } = props;
-    let controlButtonImage
-
-    clearMode == 0 ?
-        controlButtonImage = clearButtonImage :
-        controlButtonImage = opaqueButtonImage
-
-    const rotateMode = rotateStatus % 4;
-    let brushButtonStyle
-    let eraserButtonStyle
-
-    switch (clickMode) {
-        case 0:
-            brushButtonStyle = deactiveColor;
-            eraserButtonStyle = activeColor;
-            break;
-        case 1:
-            brushButtonStyle = activeColor;
-            eraserButtonStyle = deactiveColor;
-            break;
-        case 2:
-            brushButtonStyle = redColor;
-            eraserButtonStyle = deactiveColor;
-            break;
-        case 3:
-            brushButtonStyle = yellowColor;
-            eraserButtonStyle = deactiveColor;
-            break;
-        case 4:
-            brushButtonStyle = greenColor;
-            eraserButtonStyle = deactiveColor;
-            break;
-        default:
-            brushButtonStyle = deactiveColor;
-            eraserButtonStyle = deactiveColor;
-            break;
+class DotMatrix extends React.Component {
+    constructor (props) {
+        super(props);
+        bindAll(this, [
+            'handleCancel',
+            'handleOk',
+            'handleChangeDotData',
+            'handleBrushButtonClick',
+            'handleEraserButtonClick',
+            'handleExchangeButtonClick',
+            'handleControlButtonClick',
+            'handleRotateLeftButtonClick',
+            'handleRotateRightButtonClick',
+            'handleSaveButtonClick',
+            'handleStoredDataClick',
+            'handleDeleteButtonClick',
+            'onDrag',
+            'dragOver',
+            'handleResize'  //rogic-mobile
+        ]);
+        this.state = {
+            useCancelButton: true,
+            useFooter: true,
+            useHeader: true,  // rogic-mobile
+            matrixSize: [],
+            dot: null,
+            isDrag: false,
+            clickMode: 0,
+            clearMode: 0,
+            storedData: null,
+            changedStoredData: false,
+            rotateStatus: 0,
+            height: window.innerHeight,  //rogic-mobile
+            width: window.innerWidth
+        };
     }
 
-    return (
-        <Modal
-            className={styles.modalContent}
-            useFooter={useFooter}
-            useHeader={useHeader}
-            onRequestClose={onCancel}
-            useCancelButton={useCancelButton}
-            onCancel={onCancel}
-            onOk={onOk}
-            id='robo_matrix' 
-        >
-            <Box
-                className={styles.matrixWrapper}
-                direction="column"
-                style={{ // rogic-mobile
-                    height: `${height}px`,
-                    width: `${width}px`
-                }}
-            >
-                <Box
-                    className={styles.workspace}
-                    direction="row"
-                >
-                    <div className={styles.matrixSpace}>
-                        <VirtualMatrix
-                            changeDotData={changeDotData}
-                            clickMode={clickMode}
-                            dot={dot}
-                            gridVisible={gridVisible}
-                            isDrag={isDrag}
-                            matrixSize={matrixSize}
-                            onDrag={onDrag}
-                            rotateMode={rotateMode}
-                        />
-                    </div>
-                </Box>
-                <Box className={styles.buttonWrapper}
-                >
-                    <div className={styles.drawButton}>
-                        <div
-                            className={styles.button}
-                            onClick={onRotateLeftButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={rotateLeftButtonImage}
-                            />
-                        </div>
-                        <div
-                            className={styles.button}
-                            onClick={onRotateRightButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={rotateRightButtonImage}
-                            />
-                        </div>
-                        <div
-                            className={styles.button}
-                            onClick={onSaveButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={saveButtonImage}
-                            />
-                        </div>
-                    </div>
-                    <div className={styles.statusButton}>
-                        <div
-                            className={styles.button}
-                            onClick={onExchangeButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={exchangeButtonImage}
-                            />
-                        </div>
-                        <div
-                            className={styles.button}
-                            onClick={onExchangeButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={exchangeButtonImage}
-                                style={{transform: 'rotate(-90deg)'}}
-                            />
-                        </div>
+    componentDidMount () {
+        const data = this.props.json.value;
+        const column = this.props.json.column;
+        const row = this.props.json.row;
 
-                        <div className={styles.separation} />
+        let clickMode = 1;
+        if (column == 5 && row == 7) {
+            clickMode = 2;
+        }
 
-                        <div
-                            className={styles.button}
-                            onClick={onControlButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={controlButtonImage}
-                            />
-                        </div>
-                        <div
-                            className={styles.button}
-                            style={brushButtonStyle}
-                            onClick={onBrushButtonClick}
-                        >
-                            <img
-                                className={styles.buttonImage}
-                                src={brushButtonImage}
-                                style={clickMode == 0 ? null :{filter: "brightness(0) invert(1)"}}
-                            />
-                        </div>
-                        <div
-                            className={styles.button}
-                            style={eraserButtonStyle}
-                            onClick={onEraserButtonClick}
-                        >
-                            <img
-                                className={classNames(styles.buttonImage, styles.imageFlip)}
-                                src={eraserButtonImage}
-                                style={clickMode == 0 ? {filter: "brightness(0) invert(1)"} : null}
-                            />
-                        </div>
-                    </div>
-                </Box>
-                <Box
-                    className={styles.dataStorageSpace}
-                    style={storageSpaceStyle}
-                >
-                    <Storage
-                        changedStoredData={changedStoredData}
-                        storedData={storedData}
-                        onStoredDataClick={onStoredDataClick}
-                        onDeleteButtonClick={onDeleteButtonClick}
-                        matrixSize={matrixSize}
-                        exampleData={exampleData}
-                        dot={dot}
-                    />
-                </Box>
-            </Box>
-        </Modal>
-    );
+        let maxLength = column * row;
+        if (data.length < maxLength) {
+            while (true) {
+                data += '0';
+                if (data.length >= maxLength) break;
+            }
+        }
+
+        this.setState({
+            dot: data,
+            matrixSize: [column, row],
+            clickMode: clickMode
+        });
+
+        this.exampleData = exampleData;
+
+        if (localStorage.storedData && localStorage.storedData !== 'null') {
+            this.setState({storedData: JSON.parse(localStorage.storedData)});
+        } else {
+            const exampleKeys = Object.keys(this.exampleData);
+            let storedData = this.state.storedData = {};
+            exampleKeys.forEach(function (key) {
+                storedData[key] = {dot: []};
+            });
+        }
+        this.setState({changedStoredData: true});
+        this.handleResize();  // rogic-mobile
+        window.addEventListener('resize', this.handleResize);
+    }
+
+    componentWillUnmount () {
+        if (this.state.storedData === null) localStorage.storedData = null;
+        else localStorage.storedData = JSON.stringify(this.state.storedData);
+        window.removeEventListener('resize', this.handleResize);  // rogic-mobile
+    }
+
+    shouldComponentUpdate (nextProps, nextState) {
+        if (nextState.dot !== this.state.dot) {
+            var length = nextState.dot.length;
+            for (var index = 0; index < length; index++) {
+                if (1 == nextState.dot[index]) break;
+            }
+            if (index == length) {
+                this.setState({
+                    clearMode: 1
+                });
+            }
+            else {
+                this.setState({
+                    clearMode: 0
+                });
+            }
+        }
+
+        return (
+            nextState.matrixSize !== this.state.matrixSize ||
+            nextState.dot !== this.state.dot ||
+            nextState.isDrag !== this.state.isDrag ||
+            nextState.clickMode !== this.state.clickMode ||
+            nextState.clearMode !== this.state.clearMode ||
+            nextState.rotateStatus !== this.state.rotateStatus ||
+            nextState.changedStoredData ||
+            nextState.width !== this.state.width ||  // rogic-mobile
+            nextState.height !== this.state.height
+        );
+    }
+
+    componentDidUpdate () {
+        if (this.state.changedStoredData) this.setState({changedStoredData: false});
+    }
+
+    onDrag () {
+        this.setState({isDrag: true});
+        document.addEventListener('mouseup', this.dragOver);
+    }
+
+    dragOver () {
+        this.setState({isDrag: false});
+        document.removeEventListener('mouseup', this.dragOver);
+    }
+
+    handleChangeDotData (index, data) {
+        this.onDrag();
+        let dotdata = this.state.dot;
+        let inputdata;
+        if (dotdata[index] == data) inputdata = 0;
+        else inputdata = data;
+        let newdata = dotdata.substr(0, index) + inputdata + dotdata.substr(index + 1);
+        this.setState({
+            dot: newdata
+        });
+    }
+
+    handleBrushButtonClick () {
+        if (this.state.matrixSize.toString() === [5, 7].toString()) {
+            if (this.state.clickMode === 2) this.setState({clickMode: 3});
+            else if (this.state.clickMode === 3) this.setState({clickMode: 4});
+            else this.setState({clickMode: 2});
+        }
+        else {this.setState({clickMode: 1});}
+    }
+
+    handleEraserButtonClick () {
+        this.oldClickMode = this.state.clickMode;
+        this.setState({clickMode: 0});
+    }
+
+    handleExchangeButtonClick (e) {
+        const isUpDown = !!e.currentTarget.firstChild.getAttribute("style");
+        //0도, 180도 회전 상태 도트매트릭스 좌우반전 / 90도, 270도 회전 상태 도트매트릭스 상하반전
+        const flipHorizontal = function () {
+            let dots = '';
+            for (let height = 0; height < this.state.matrixSize[1]; height++) {
+                for (let width = this.state.matrixSize[0] - 1; width >= 0; width--) {
+                    let beforeIndex = height * this.state.matrixSize[0] + width;
+                    dots += this.state.dot[beforeIndex];
+                }
+            }
+            return dots;
+        }.bind(this);
+        //0도, 180도 회전 상태 도트매트릭스 상하반전 / 90도, 270도 회전 상태 도트매트릭스 좌우반전
+        const flipVertical = function () {
+            let dots = '';
+            for (let height = this.state.matrixSize[1] - 1; height >= 0; height--) {
+                for (let width = 0; width < this.state.matrixSize[0]; width++) {
+                    let beforeIndex = height * this.state.matrixSize[0] + width;
+                    dots += this.state.dot[beforeIndex];
+                }
+            }
+            return dots;
+        }.bind(this);
+
+        //회전 상태에 따른 함수호출
+        if (isUpDown ^ (this.state.rotateStatus % 2 == 0)) {
+            this.setState({dot: flipHorizontal()});
+        } else {
+            this.setState({dot: flipVertical()});
+        }
+    }
+
+    handleControlButtonClick () {
+        var string = '';
+        var length = this.state.dot.length;
+        if (this.state.clearMode === 1) {
+            let clearColor = this.state.clickMode;
+            if (0 === this.state.clickMode) clearColor = this.oldClickMode;
+            for (var index = 0; index < length; index++) {
+                string += String(clearColor);
+            }
+        } else if (this.state.clearMode === 0) {
+            for (var index = 0; index < length; index++) {
+                string += '0';
+            }
+        }
+        this.setState({
+            dot: string
+        });
+    }
+
+    handleRotateLeftButtonClick () {
+        if (this.state.rotateStatus === 0) this.state.rotateStatus = 4;
+        this.setState({rotateStatus: this.state.rotateStatus - 1});
+    }
+    handleRotateRightButtonClick () {
+        if (this.state.rotateStatus === 3) this.state.rotateStatus = -1;
+        this.setState({rotateStatus: this.state.rotateStatus + 1});
+    }
+
+    handleSaveButtonClick () {
+        let lastJson = JSON.stringify(this.state.storedData);
+        this.state.storedData[this.state.matrixSize.toString()].dot.push(this.state.dot);
+        let nowJson = JSON.stringify(this.state.storedData);
+
+        this.setState({changedStoredData: (lastJson !== nowJson)});
+    }
+
+    handleStoredDataClick (data) {
+        this.setState({dot: data});
+    }
+
+    handleDeleteButtonClick (index) {
+        let lastJson = JSON.stringify(this.state.storedData);
+        let array = this.state.storedData[this.state.matrixSize.toString()].dot;
+        array = array.slice(0, index).concat(array.slice(Number(index) + 1));
+        this.state.storedData[this.state.matrixSize.toString()].dot = array;
+        let nowJson = JSON.stringify(this.state.storedData);
+
+        this.setState({changedStoredData: (lastJson !== nowJson)});
+    }
+
+    handleCancel () {
+        this.props.onRequestClose();
+    }
+
+    handleOk () {
+        var json = {value: this.state.dot};
+
+        this.props.callback(json);
+        this.props.onRequestClose();
+    }
+
+    handleResize = () => {  //rogic-mobile: scratch-gui 파라미터 이용
+        this.setState({
+            height: window.innerHeight - (3 * 16),
+            width: window.innerWidth
+        });
+    };
+
+    render () {
+        const storageSpaceStyle = {width: 512};
+        if (this.state.matrixSize.toString() == [15, 7].toString()) {
+            storageSpaceStyle.width = 560;
+        }
+
+        return (
+            <DotMatrixComponent
+                useFooter={this.state.useFooter}
+                useHeader={this.state.useHeader}
+                useCancelButton={this.state.useCancelButton}
+                onCancel={this.handleCancel}
+                onOk={this.handleOk}
+                matrixSize={this.state.matrixSize}
+                dot={this.state.dot}
+                storedData={this.state.storedData}
+                changedStoredData={this.state.changedStoredData}
+                clearMode={this.state.clearMode}
+                clickMode={this.state.clickMode}
+                exampleData={this.exampleData}
+                gridVisible={true}
+                isDrag={this.state.isDrag}
+                rotateStatus={this.state.rotateStatus}
+                onDrag={this.onDrag}
+                changeDotData={this.handleChangeDotData}
+                onBrushButtonClick={this.handleBrushButtonClick}
+                onControlButtonClick={this.handleControlButtonClick}
+                onDeleteButtonClick={this.handleDeleteButtonClick}
+                onEraserButtonClick={this.handleEraserButtonClick}
+                onExchangeButtonClick={this.handleExchangeButtonClick}
+                onRotateLeftButtonClick={this.handleRotateLeftButtonClick}
+                onRotateRightButtonClick={this.handleRotateRightButtonClick}
+                onSaveButtonClick={this.handleSaveButtonClick}
+                onStoredDataClick={this.handleStoredDataClick}
+                setStorageSpace={this.setStorageSpace}
+                storageSpaceStyle={storageSpaceStyle}
+                height={this.state.height}  //rogic-mobile
+                width={this.state.width}
+            />
+        );
+    }
+}
+
+DotMatrix.propTypes = {
+    onRequestClose: PropTypes.func.isRequired,
+    type: PropTypes.string,
+    json: PropTypes.object,
+    callback: PropTypes.func,
 };
 
-DotMatrixComponent.propTypes = {
-    useCancelButton: PropTypes.bool,
-    useFooter: PropTypes.bool,
-    useHeader: PropTypes.bool,
-    onCancel: PropTypes.func.isRequired,
-    onOk: PropTypes.func.isRequired,
-    onBrushButtonClick: PropTypes.func,
-    onControlButtonClick: PropTypes.func,
-    onDeleteButtonClick: PropTypes.func,
-    onEraserButtonClick: PropTypes.func,
-    onExchangeButtonClick: PropTypes.func,
-    onRotateLeftButtonClick: PropTypes.func,
-    onRotateRightButtonClick: PropTypes.func,
-    onSaveButtonClick: PropTypes.func,
-    onStoredDataClick: PropTypes.func,
-    changeDotData: PropTypes.func,
-    clearMode: PropTypes.number,
-    clickMode: PropTypes.number,
-    dot: PropTypes.string,
-    exampleData: PropTypes.object,
-    gridVisible: PropTypes.bool,
-    matrixSize: PropTypes.arrayOf(PropTypes.number),
-    isDrag: PropTypes.bool,
-    rotateStatus: PropTypes.number,
-    onDrag: PropTypes.func,
-    storedData: PropTypes.object,
-    changedStoredData: PropTypes.bool,
-    dimensions: PropTypes.object,
-    height: PropTypes.number,  // rogic-mobile
-    width: PropTypes.number
+DotMatrix.defaultOptions = {
+
 };
 
-export default DotMatrixComponent;
+DotMatrix.defaultProps = {
+
+};
+
+const mapStateToProps = state => ({
+    json: state.scratchGui.dotMatrix.json,
+    callback: state.scratchGui.dotMatrix.callback
+});
+
+export default connect(
+    mapStateToProps
+)(DotMatrix);
