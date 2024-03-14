@@ -1,0 +1,119 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+
+.modal-content {
+
+}
+
+.matrix-wrapper {
+    width: auto;
+    height: auto;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    justify-content: center; /**rogic-mobile*/
+}
+
+.workspace {
+    min-height: 17rem;
+    min-width: 22rem;
+    display: flex;
+    justify-content: center; /**rogic-mobile*/
+    align-items: center;
+    width: 100%;
+}
+
+.matrix-space {
+    min-height: 17rem;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-end; /**rogic-mobile*/
+    flex-grow: 5;
+}
+
+.button-space {  /**rogic-mobile*/
+    display: flex;
+    flex-grow: 5;
+    justify-content: flex-start;
+}
+
+.button-wrapper {
+    display: flex;
+    align-content: center;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0rem;
+    flex-direction: column; /**rogic-mobile*/
+    align-self: center;
+}
+
+.draw-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    margin-right: 1rem;
+}
+
+.status-button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin-left: 1rem;
+    flex-direction: row; /**rogic-mobile*/
+}
+
+.button {
+    min-height: 3rem;
+    min-width: 3rem;
+    border-radius: 0.6rem;
+    background-color: white;
+    margin-left: .1rem;
+    margin-right: .1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    transition: all 0.2s;
+    border: 2px solid #3373CC; /**rogic-mobile*/
+    border-radius: 50%;
+}
+
+    .button:active {
+        background-color: $motion-light-transparent;
+    }
+
+.deactive-button {
+    border-color: gray;
+    background-color: gray;
+}
+
+.button-image {
+    width: 2rem;
+    height: 2rem;
+}
+
+.image-flip {
+    transform: scaleX(-1);
+}
+
+.data-storage-space {
+    height: calc(62px + 1rem + 10px);
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0rem;
+    padding-bottom: .5rem;
+    width: 100% !important; /**rogic-mobile*/
+    border-top: 1px solid $ui-black-transparent;
+}
+
+.separation {
+    margin-bottom: 0.7rem;
+    margin-top: 0.7rem;
+    border: 1px dashed #D9D9D9;
+}
