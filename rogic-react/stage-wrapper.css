@@ -1,0 +1,71 @@
+@import "../../css/units.css";
+@import "../../css/colors.css";
+@import "../../css/z-index.css";
+
+.stage-wrapper * {
+    box-sizing: border-box;
+}
+
+.stage-menu-wrapper {
+    display: none;
+}
+
+.stage-canvas-wrapper {  /**rogic-mobile*/
+    /* Hides negative space between edge of rounded corners + container, when selected */
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: calc((100vw - (0.5rem * 2))*0.6 - 0.5rem) !important;
+    height: calc(((100vw - (0.5rem * 2)) * 0.6) * (3/4) - 0.5rem) !important;
+    margin-top: 0.8rem;
+}
+
+.stage-canvas {  /**rogic-mobile*/
+    width: calc((100vw - (0.5rem * 2))*0.6 - 0.5rem) !important;
+    height: calc(((100vw - (0.5rem * 2)) * 0.6) * (3/4) - 40px - 0.3rem) !important;
+}
+
+.stage-canvas-controls { /**rogic-mobile*/
+    display: flex;
+    justify-content: flex-start;
+    background-color: white;
+    margin-bottom: 0.3rem;
+    width: 100%;
+    margin-top: -4px;
+}
+
+@media (max-height: 360px) {  /**rogic-mobile*/
+    .stage-canvas-wrapper {
+        margin-top: 0.8rem !important;
+    }
+    .stage-canvas-controls {
+        height: 40px;
+    }
+}
+
+.stage-wrapper.full-screen {
+    position: fixed;
+    top: $stage-menu-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: $z-index-stage-wrapper-overlay;
+    background-color: $ui-white;
+    /* spacing between stage and control bar (on the top), or between
+    stage and window edges (on left/right/bottom) */
+    padding: $stage-full-screen-stage-padding;
+    /* this centers the stage */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stage-wrapper-hidden {
+    display: none;
+}
+
+.stage-dummy {
+    border-radius: $space;
+    border: $stage-standard-border-width solid $ui-black-transparent;
+}

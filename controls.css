@@ -1,0 +1,14 @@
+@import "../../css/units.css";
+
+.controls-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;  /**rogic-mobile*/
+    width: 95%;
+}
+
+.controls-container-fullscreen {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: $space;
+}
